@@ -84,6 +84,10 @@ class UserManagement:
         user = users.find_one({'uid': uid})
 
         return UserData(user)
+    
+    def get_all_users(self) -> list[UserData]:
+        users = self.mongo[self.db_name][self.user_data_collection]
+        return [ UserData(user) for user in users.find({}) ]            
 
     def login(self, login_data: LoginInfo):
         self.__register_user(login_data)

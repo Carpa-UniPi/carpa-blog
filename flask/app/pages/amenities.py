@@ -7,7 +7,7 @@ amenities_bp = Blueprint("amenities_pages", __name__)
 def amenity():
     amenity = get_todays_amenity()
     content = render_template("amenity.html", amenity = amenity)
-    return render_skeleton("Amenity", content)
+    return render_skeleton(f"{app_config["blog-name"]} - Amenity", content)
 
 def get_todays_amenity():
     from datetime import datetime
@@ -17,6 +17,7 @@ def get_todays_amenity():
     weeknumber = now.isocalendar()[1]
 
     try:
+        print(f"/blog/data/amenities/year{year:4}week{weeknumber:02}.html")
         with open(f"/blog/data/amenities/year{year:4}week{weeknumber:02}.html", "r") as f:
             return f.read()
     except:

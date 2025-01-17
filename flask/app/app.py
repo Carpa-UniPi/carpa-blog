@@ -7,6 +7,9 @@ from session import *
 from pages.amenities import amenities_bp
 from pages.settings import settings_bp
 from pages.login import login_bp
+from pages.main_page import main_page_bp
+from pages.events import events_bp
+from pages.students import students_bp
 from globals import *
 
 def load_config():
@@ -21,6 +24,9 @@ app.secret_key = os.environ['FLASK_SECRET_KEY']
 app.register_blueprint(settings_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(amenities_bp)
+app.register_blueprint(main_page_bp)
+app.register_blueprint(events_bp)
+app.register_blueprint(students_bp)
 load_config()
 
 user_management.setup(app, app_config)
@@ -29,11 +35,11 @@ user_management.setup(app, app_config)
 def not_found(error = None):
     return render_skeleton("404...", render_template("404.html"))
 
-@app.route("/")
+@app.route("/blog")
 def index():
     articles = ''.join(render_articles_previews())
     posts = render_template("articles/posts.html", articles= articles)
-    return render_skeleton(app_config["blog-name"], posts)
+    return render_skeleton(f"{app_config["blog-name"]} - Blog", posts)
 
 @app.route("/about")
 def about():
