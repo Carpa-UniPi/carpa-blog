@@ -11,6 +11,7 @@ class UserData:
         self.email = db_entry.get('email')
         self.picture = db_entry.get('picture')
         self.personal_page = db_entry.get('personal_page')
+        self.public = db_entry.get('public')
 
         # blog author data
         self.author_id = db_entry.get('author_id')
@@ -21,7 +22,8 @@ class UserData:
             'first_name': name,
             'last_name': surname,
             'email': email,
-            'picture': picture
+            'picture': picture,
+            'public': True
         }
 
 class UserDataUpdateBuilder:
@@ -49,6 +51,9 @@ class UserDataUpdateBuilder:
     def update_author_id(self, new_author_id: str | None):
         self.updates['author_id'] = new_author_id
 
+    def update_public(self, public: bool):
+        self.updates['public'] = public
+
 class UserManagement:
     def __init__(self):
         self.mongo = MongoClient(host=os.environ['MONGO_SERVER_ADDR'], port=int(os.environ['MONGO_SERVER_PORT']))
@@ -70,6 +75,9 @@ class UserManagement:
     def __user_from_db(self, uid: str) -> dict:
         users = self.mongo[self.db_name][self.user_data_collection]
         return users.find_one({'uid': uid})
+
+    def get_logged_user(self) -> str | None:
+        return session.get('uid')
 
     def is_logged_in(self) -> bool:
         uid = session.get('uid')

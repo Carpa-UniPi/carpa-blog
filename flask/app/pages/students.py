@@ -59,7 +59,7 @@ def get_student_data():
     with open("/blog/data/students/roles.json", "r") as f:
         roles = json.loads(f.read())
 
-    return [ StudentData(get_student_role(user, roles), user) for user in user_management.get_all_users() ]
+    return [ StudentData(get_student_role(user, roles), user) for user in user_management.get_all_users() if user.public ]
 
 def get_student_role(user_data: UserData, roles: dict) -> str:
     if user_data.email in roles['mantainers']:
