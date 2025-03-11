@@ -28,15 +28,15 @@ class TailwindTreeProcessor(Treeprocessor):
         "hr" : "h-px mb-2 bg-gray-200 border-0 bg-dark-800 dark:bg-dark-200",
 
         # lists
-        "ul" : "max-w-md ml-4 space-y-1 text-dark-900 list-disc list-inside dark:text-dark-50",
-        "ol" : "max-w-md ml-4 space-y-1 text-dark-900 list-decimal list-inside dark:text-dark-50",
+        "ul" : "mx-4 space-y-1 text-dark-900 list-disc dark:text-dark-50",
+        "ol" : "mx-4 space-y-1 text-dark-900 list-decimal dark:text-dark-50",
 
         # block quotes
         "blockquote" : "mx-2 px-1 pt-2 py-1 mb-2 border-s-4 border-dark-300 bg-gray-50 dark:border-dark-500 dark:bg-dark-800",
 
         # code blocks
         "pre" : "font-mono m-2 p-2 pl-3 rounded-xl border-dark-300 bg-gray-50 dark:bg-dark-950 text-dark-800 dark:text-white",
-        "code" : "font-mono rounded-md bg-gray-50 dark:bg-dark-950",
+        "code" : "font-mono px-1 rounded-md bg-gray-50 dark:bg-dark-950",
 
         # tables
         "table" : "text-left my-2",

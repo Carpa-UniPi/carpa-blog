@@ -10,6 +10,7 @@ from pages.login import login_bp
 from pages.main_page import main_page_bp
 from pages.events import events_bp
 from pages.students import students_bp
+from pages.not_found import not_found_bp
 from globals import *
 
 def load_config():
@@ -27,6 +28,7 @@ app.register_blueprint(amenities_bp)
 app.register_blueprint(main_page_bp)
 app.register_blueprint(events_bp)
 app.register_blueprint(students_bp)
+app.register_blueprint(not_found_bp)
 load_config()
 
 user_management.setup(app, app_config)

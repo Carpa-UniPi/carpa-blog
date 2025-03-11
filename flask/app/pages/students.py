@@ -42,13 +42,14 @@ class StudentRole(Flag):
             return StudentRole.STUDENT | StudentRole.MANTAINER | StudentRole.REPRESENTATIVE
 
 class StudentData:
-    def __init__(self, role: StudentRole, name: str, page: str):
+    def __init__(self, role: StudentRole, email: str, name: str, page: str):
         self.role = role
+        self.email = email
         self.name = name
         self.page = page
 
     def from_user_data(role: StudentRole, user_data: UserData) -> Self:
-        return StudentData(role, camel_case_name(f"{user_data.name} {user_data.surname}"), user_data.personal_page)
+        return StudentData(role, user_data.email, camel_case_name(f"{user_data.name} {user_data.surname}"), user_data.personal_page)
 
     def has_role(self, role: StudentRole):
         return self.role in role
@@ -101,11 +102,10 @@ def get_student_data():
     with open("/blog/data/students/extra.json", "r") as f:
         extra = json.loads(f.read())
 
+    extra_students = [ StudentData(StudentRole.deserialize(user['role']), user['email'], user['full_name'], user['personal_page']) for user in extra ]
     db_users = user_management.get_all_users()
     db_students = [ StudentData.from_user_data(get_student_role(user, roles), user)
-                    for user in db_users if user.public ]
-    extra_students = [ StudentData(StudentRole.deserialize(user['role']), user['full_name'], user['personal_page'])
-                       for user in extra if next(filter(lambda x: user['email'] == x.email and x.public, db_users), None) is None ]
+                    for user in db_users if user.public and next(filter(lambda x: user.email == x.email, extra_students), None) is None ]
     return db_students + extra_students
 
 def get_student_role(user_data: UserData, roles: dict) -> StudentRole:
