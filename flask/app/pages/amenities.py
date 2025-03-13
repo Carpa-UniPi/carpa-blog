@@ -7,7 +7,7 @@ amenities_bp = Blueprint("amenities_pages", __name__)
 @amenities_bp.route("/amenity")
 def amenity():
     year: str = request.args.get('year')
-    weeknum: str = request.args.get('weeknum')
+    weeknum: str = request.args.get('week')
     use_404 = False
     if year is not None or weeknum is not None:
         use_404 = True

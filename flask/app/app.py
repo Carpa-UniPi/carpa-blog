@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request
 from templates import *
 from articles import *
 from session import *
@@ -49,11 +49,14 @@ def about():
 
 @app.route('/articles/<article>')
 def article(article, skip_hidden = True):
-    article = render_article(article, skip_hidden)
+    lang: str = request.args.get('lang')
+    article = render_article(article, skip_hidden, lang)
+    main_lang = lang is None or lang == 'it' or 'en' not in article['metadata']
+    title = article['metadata']['title'] if main_lang else article['metadata']['en']['title']
     if article is None:
         return not_found()
     else:
-        return render_skeleton(article['metadata']['title'], article['article'])
+        return render_skeleton(title, article['article'])
     
 @app.route('/about/<username>')
 def about_user(username):

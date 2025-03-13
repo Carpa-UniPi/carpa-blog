@@ -76,12 +76,16 @@ def settings():
     students = sorted(students, key=lambda x: x.name)
     students = ''.join([ render_student(x) for x in students ])
 
-    page = render_template("/students/main.html", users=students)
+    page = render_template("/students/main.html", users=students,
+        icon_maintainer = render_template("/students/icon_maintainer.html"),
+        icon_representative = render_template("/students/icon_representative.html"),
+        icon_student = render_template("/students/icon_student.html")
+    )
     return render_skeleton(f"{app_config["blog-name"]} - Students", page)
 
 def render_student(data: StudentData):
     if data.role == StudentRole.MANTAINER:
-        icon = render_template("/students/icon_mantainer.html")
+        icon = render_template("/students/icon_maintainer.html")
     elif data.role == StudentRole.REPRESENTATIVE:
         icon = render_template("/students/icon_representative.html")
     else:

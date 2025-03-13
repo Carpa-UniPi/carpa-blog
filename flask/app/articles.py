@@ -45,6 +45,7 @@ def render_article_preview(metadata):
         subtitle = metadata['subtitle'],
         authors = authors,
         date = render_article_date(metadata),
+        other_lang = 'en' in metadata,
         page = f"./articles/{metadata['page']}",
     )
 
@@ -85,10 +86,12 @@ def get_articles_metadata():
         data = json.load(f)
         return [ __parse_article_metadata(article, data) for article, data in data.items() ]
 
-def render_article(article: str, skip_hidden = True):
+def render_article(article: str, skip_hidden = True, lang = None):
     import time
 
     metadata = get_article_metadata(article)
+    main_lang = lang is None or lang == 'it' or 'en' not in metadata   
+    other_lang = None if 'en' not in metadata else ('en' if main_lang else 'it')
 
     if skip_hidden and metadata['hidden']:
         return None
@@ -96,23 +99,26 @@ def render_article(article: str, skip_hidden = True):
     authors = ''.join([ render_author_big(a) for a in metadata['authors'] ])
     header = render_template(
         "articles/header.html",
-        title = metadata['title'],
-        subtitle = metadata['subtitle'],
+        title = metadata['title'] if main_lang else metadata['en']['title'],
+        subtitle = metadata['subtitle'] if main_lang else metadata['en']['subtitle'],
         authors = authors,
+        other_lang = other_lang,
         date = render_article_date(metadata),
     )
     
     page = None
-    if metadata['content-type'] == 'html':
+    content = metadata['content'] if main_lang else metadata['en']['content'] 
+    contenttype = metadata['content-type'] if main_lang else metadata['en']['content-type']
+    if contenttype == 'html':
         page = render_template(
-            f"root/{metadata['content']}",
+            f"root/{content}",
             header = header
         )
-    elif metadata['content-type'] == 'markdown':
+    elif contenttype == 'markdown':
         import markdown
         from md_extensions import TailwindExtension
 
-        with open(f"/blog/{metadata['content']}", 'r') as f:
+        with open(f"/blog/{content}", 'r') as f:
             page = markdown.markdown(
                 f.read(),
                 extensions=['extra', TailwindExtension()]

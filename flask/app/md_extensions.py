@@ -14,18 +14,18 @@ class TailwindTreeProcessor(Treeprocessor):
 
     classes = {
         # general text
-        "h1" : "text-4xl pb-2 font-extrabold text-gray-900 dark:text-white",
-        "h2" : "text-3xl pb-2 font-bold text-gray-900 dark:text-white",
-        "h3" : "text-2xl pb-2 font-bold text-gray-900 dark:text-white",
-        "h4" : "text-xl pb-2 font-bold text-gray-900 dark:text-white",
-        "h5" : "text-lg pb-2 font-bold text-gray-900 dark:text-white",
-        "h6" : "text-md pb-2 font-bold text-gray-900 dark:text-white",
-        "a"  : "underline dark:text-dark-200 dark:hover:text-dark-100",
-        "p"  : "text-md pb-2 text-gray-900 dark:text-white",
+        "h1" : "text-4xl pb-2 font-extrabold",
+        "h2" : "text-3xl pb-2 font-bold",
+        "h3" : "text-2xl pb-2 font-bold",
+        "h4" : "text-xl pb-2 font-bold",
+        "h5" : "text-lg pb-2 font-bold",
+        "h6" : "text-md pb-2 font-bold",
+        "a"  : "underline text-dark-700 hover:text-dark-400 dark:text-dark-200 dark:hover:text-dark-100",
+        "p"  : "text-md pb-2",
         "sup": "p-1",
 
         # rulers
-        "hr" : "h-px mb-2 bg-gray-200 border-0 bg-dark-800 dark:bg-dark-200",
+        "hr" : "h-px mb-2 bg-gray-500 border-0 dark:bg-dark-200",
 
         # lists
         "ul" : "mx-4 space-y-1 text-dark-900 list-disc dark:text-dark-50",

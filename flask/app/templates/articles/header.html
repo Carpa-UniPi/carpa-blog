@@ -1,7 +1,16 @@
 <header class="mb-4 lg:mb-6 not-format">
-    <address class="flex flex-col items-left not-italic">
-        {{ authors|safe }}
-    </address>
+    <div class="flex justify-between items-start w-full">
+        <address class="flex flex-col items-left not-italic">
+            {{ authors|safe }}
+        </address>
+        {% if other_lang is not none %}
+        <a href="{{ page }}?lang={{ other_lang }}">
+            <svg class="w-10 h-10 p-1 mt-2 hover:bg-gray-300 dark:hover:bg-dark-700 rounded" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13 19 3.5-9 3.5 9m-6.125-2h5.25M3 7h7m0 0h2m-2 0c0 1.63-.793 3.926-2.239 5.655M7.5 6.818V5m.261 7.655C6.79 13.82 5.521 14.725 4 15m3.761-2.345L5 10m2.761 2.655L10.2 15"/>
+            </svg>
+        </a>
+        {% endif %}
+    </div>
     <p class="mb-2 text-m leading-tight text-gray-900 dark:text-white">{{ date }}</p>
     <h1 class="mb-2 text-3xl font-extrabold leading-tight text-gray-900 dark:text-white">{{ title }}</h1>
     <p class="text-xl leading-tight text-gray-900 dark:text-white">{{ subtitle }}</p>

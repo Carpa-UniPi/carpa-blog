@@ -6,5 +6,5 @@ events_bp = Blueprint("events", __name__)
 
 @events_bp.route("/events")
 def settings():
-    posts = render_template("articles/events.html", articles= [])
+    posts = render_template("articles/events.html", articles= "")
     return render_skeleton(f"{app_config["blog-name"]} - Events", posts)
