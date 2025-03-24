@@ -9,25 +9,30 @@ from session import UserData
 students_bp = Blueprint("students", __name__)
 
 class StudentRole(Flag):
-    STUDENT = auto()
+    NONE = 0
+    USER = auto()
     MANTAINER = auto()
     REPRESENTATIVE = auto()
 
     def serialize(self) -> str:
-        if StudentRole.STUDENT | StudentRole.MANTAINER | StudentRole.REPRESENTATIVE in self:
-            return "all"
-        elif StudentRole.STUDENT in self:
+        if StudentRole.USER in self:
             return "student"
+        elif StudentRole.MANTAINER | StudentRole.REPRESENTATIVE in self:
+            return "mantainer_repr"
         elif StudentRole.MANTAINER in self:
             return "mantainer"
         elif StudentRole.REPRESENTATIVE in self:
             return "representative"
+        else:
+            return "all"
         
     def deserialize(value: str) -> Self:
         if value == "all":
-            return StudentRole.STUDENT | StudentRole.MANTAINER | StudentRole.REPRESENTATIVE
+            return StudentRole.NONE
         elif value == "student":
-            return StudentRole.STUDENT
+            return StudentRole.USER
+        elif value == "mantainer_repr":
+            return StudentRole.MANTAINER | StudentRole.REPRESENTATIVE
         elif value == "mantainer":
             return StudentRole.MANTAINER
         elif value == "representative":
@@ -39,7 +44,7 @@ class StudentRole(Flag):
         try:
             return StudentRole.deserialize(value)
         except:
-            return StudentRole.STUDENT | StudentRole.MANTAINER | StudentRole.REPRESENTATIVE
+            return StudentRole.USER | StudentRole.MANTAINER | StudentRole.REPRESENTATIVE
 
 class StudentData:
     def __init__(self, role: StudentRole, email: str, name: str, page: str):
@@ -52,7 +57,7 @@ class StudentData:
         return StudentData(role, user_data.email, camel_case_name(f"{user_data.name} {user_data.surname}"), user_data.personal_page)
 
     def has_role(self, role: StudentRole):
-        return self.role in role
+        return role in self.role
         
     def name_filter(self, name: str):
         if name is None or name == "":
@@ -63,7 +68,7 @@ class StudentData:
         return f"StudentData for '{self.name}' ({self.role})"
 
 @students_bp.route("/students")
-def settings():
+def students():
     role = request.args.get("role")
     if role is None:
         role = "all"
@@ -84,10 +89,10 @@ def settings():
     return render_skeleton(f"{app_config["blog-name"]} - Students", page)
 
 def render_student(data: StudentData):
-    if data.role == StudentRole.MANTAINER:
-        icon = render_template("/students/icon_maintainer.html")
-    elif data.role == StudentRole.REPRESENTATIVE:
+    if StudentRole.REPRESENTATIVE in data.role:
         icon = render_template("/students/icon_representative.html")
+    elif StudentRole.MANTAINER in data.role:
+        icon = render_template("/students/icon_maintainer.html")
     else:
         icon = render_template("/students/icon_student.html")
 
@@ -106,16 +111,18 @@ def get_student_data():
     with open("/blog/data/students/extra.json", "r") as f:
         extra = json.loads(f.read())
 
-    extra_students = [ StudentData(StudentRole.deserialize(user['role']), user['email'], user['full_name'], user['personal_page']) for user in extra ]
     db_users = user_management.get_all_users()
-    db_students = [ StudentData.from_user_data(get_student_role(user, roles), user)
-                    for user in db_users if user.public and next(filter(lambda x: user.email == x.email, extra_students), None) is None ]
+    db_students = [ StudentData.from_user_data(get_student_role(user, roles), user) for user in db_users if user.public ]
+    extra_students = [ StudentData(StudentRole.deserialize(user['role']), user['email'], user['full_name'], user['personal_page']) for user in extra ]
+    extra_students = [ user for user in extra_students if next(filter(lambda x: user.email == x.email, db_students), None) is None]
     return db_students + extra_students
 
 def get_student_role(user_data: UserData, roles: dict) -> StudentRole:
-    if user_data.email in roles['mantainers']:
+    if user_data.email in roles['mantainers'] and user_data.email in roles['representatives']:
+        return StudentRole.MANTAINER | StudentRole.REPRESENTATIVE
+    elif user_data.email in roles['mantainers']:
         return StudentRole.MANTAINER
     elif user_data.email in roles['representatives']:
         return StudentRole.REPRESENTATIVE
     else:
-        return StudentRole.STUDENT
+        return StudentRole.USER
